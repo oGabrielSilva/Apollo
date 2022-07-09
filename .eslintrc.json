@@ -38,7 +38,8 @@
         "no-useless-constructor": "off",
         "no-empty-function": "off",
         "operator-linebreak": "off",
-        "object-curly-newline": "off"
+        "object-curly-newline": "off",
+        "react/require-default-props": "off"
       },
       "settings": {
         "import/resolver": {

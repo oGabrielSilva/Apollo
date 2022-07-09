@@ -4,17 +4,21 @@ import Button from '../../components/Button';
 import Main from '../../components/Main';
 import Section from '../../components/Section';
 import SText from '../../components/SText';
+import { TWelcome } from '../../types/screens';
 import Colors from '../../utils/Colors';
 import Fonts from '../../utils/Fonts';
-import images from '../../utils/Images';
+import Images from '../../utils/Images';
 import Margin from '../../utils/Margin';
 
-function Welcome() {
+function Welcome({ navigation }: TWelcome) {
+  const handleNavigatorToSignIn = () => navigation.navigate('SignIn');
+  const handleNavigatorToSignUp = () => navigation.navigate('SignUp');
+
   return (
     <>
       <Main moreStyle={style.main}>
         <Section moreStyle={style.sectionInitial}>
-          <Image source={images.stackW} style={style.logo} />
+          <Image source={Images.stackW} style={style.logo} />
           <SText moreStyle={style.title} bold>
             Apollo
           </SText>
@@ -30,12 +34,12 @@ function Welcome() {
             Sign in or register. We will be happy to have you with us. Share
             your creativity with our community.
           </SText>
-          <Button dark>
+          <Button dark onPress={handleNavigatorToSignIn}>
             <SText center bold>
               Sign in
             </SText>
           </Button>
-          <Button>
+          <Button onPress={handleNavigatorToSignUp}>
             <SText dark center bold>
               Sign up
             </SText>

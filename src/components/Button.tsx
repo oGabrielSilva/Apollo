@@ -4,9 +4,10 @@ import { IButton } from '../types/components';
 import Colors from '../utils/Colors';
 import Margin from '../utils/Margin';
 
-function Button({ children, dark }: IButton) {
+function Button({ children, dark, onPress }: IButton) {
   return (
     <TouchableOpacity
+      onPress={onPress}
       style={{ ...style.main, ...(dark && { backgroundColor: Colors.dark }) }}
     >
       {children}

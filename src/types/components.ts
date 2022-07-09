@@ -19,4 +19,5 @@ export interface ISText extends IChildren {
 
 export interface IButton extends IChildren {
   dark?: boolean;
+  onPress: () => void;
 }
