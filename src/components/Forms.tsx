@@ -1,5 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import {
+  Platform,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import Colors from '../utils/Colors';
 import Fonts from '../utils/Fonts';
 import Margin from '../utils/Margin';
@@ -28,6 +34,12 @@ export function FormSignUp() {
   useEffect(() => setEmailValid(emailValidation(email)), [email]);
 
   useEffect(() => setPasswordValid(password.length >= 8), [password]);
+
+  const handleSignUp = () => {
+    if (nameValid && emailValid && passwordValid) {
+      const os = Platform.OS;
+    }
+  };
 
   return (
     <Section>
