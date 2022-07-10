@@ -10,7 +10,7 @@ import {
   View,
 } from 'react-native';
 import BarGoBack from '../../components/Bar';
-import FormSignIn from '../../components/Forms';
+import { FormSignUp } from '../../components/Forms';
 import Main from '../../components/Main';
 import Section from '../../components/Section';
 import SText from '../../components/SText';
@@ -38,15 +38,15 @@ function LogIn({ navigation }: TLogIn) {
   }, []);
 
   return (
-    <View style={[{ flex: 1 }, style.topBar]}>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
       <ScrollView
         contentContainerStyle={{ flex: 1 }}
         keyboardShouldPersistTaps="handled"
       >
-        <KeyboardAvoidingView
-          style={{ flex: 1 }}
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        >
+        <View style={[{ flex: 1 }, style.topBar]}>
           <View>
             <StatusBar
               backgroundColor={Colors.yellow}
@@ -57,10 +57,10 @@ function LogIn({ navigation }: TLogIn) {
                 {inputFocus && (
                   <View style={style.registerBar}>
                     <TouchableOpacity
-                      onPress={() => navigation.navigate('SignUp')}
+                      onPress={() => navigation.navigate('SignIn')}
                     >
                       <SText moreStyle={style.registerTextBar} bold>
-                        Register
+                        Log in
                       </SText>
                     </TouchableOpacity>
                   </View>
@@ -75,30 +75,30 @@ function LogIn({ navigation }: TLogIn) {
                   size={25}
                   moreStyle={{ marginBottom: Margin.vertical }}
                 >
-                  Sign in
+                  Create an account
                 </SText>
                 <SText dark>
-                  Ohh, let&apos;s get a session started! Find new things and
-                  share your creativity
+                  Let&apos;s be part of our community! Let your creativity flow.
+                  Talk, share and find new ideas.
                 </SText>
               </Section>
             )}
           </View>
           <Main moreStyle={style.main}>
-            <FormSignIn
-              forgotPassword={() => navigation.navigate('ForgotPassword')}
-            />
+            <FormSignUp />
           </Main>
           {!inputFocus && (
             <View style={style.register}>
-              <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
-                <SText moreStyle={style.registerText}>Register</SText>
+              <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
+                <SText moreStyle={style.registerText}>
+                  Already have an account?
+                </SText>
               </TouchableOpacity>
             </View>
           )}
-        </KeyboardAvoidingView>
+        </View>
       </ScrollView>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
