@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import api from '../api/requests';
+import { IGenderForms } from '../types/components';
 import Colors from '../utils/Colors';
 import Fonts from '../utils/Fonts';
 import Margin from '../utils/Margin';
@@ -23,6 +25,7 @@ export function FormSignUp() {
   const [nameValid, setNameValid] = useState(false);
   const [email, setEmail] = useState('');
   const [emailValid, setEmailValid] = useState(false);
+  const [gender, setGender] = useState<IGenderForms>('F');
   const [password, setPassword] = useState('');
   const [passwordValid, setPasswordValid] = useState(false);
 
@@ -38,6 +41,7 @@ export function FormSignUp() {
   const handleSignUp = () => {
     if (nameValid && emailValid && passwordValid) {
       const os = Platform.OS;
+      api.signUp({ email, name, os, gender, password });
     }
   };
 
@@ -81,8 +85,37 @@ export function FormSignUp() {
         placeholderTextColor={Colors.white}
         returnKeyType="send"
         secureTextEntry
+        onSubmitEditing={handleSignUp}
       />
-      <Button onPress={() => {}}>
+      <Section
+        moreStyle={{ flexDirection: 'row', justifyContent: 'space-around' }}
+      >
+        <TouchableOpacity onPress={() => setGender('M')}>
+          <SText
+            bold={gender === 'M'}
+            moreStyle={(gender === 'M' && { color: Colors.yellow }) || {}}
+          >
+            Male
+          </SText>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => setGender('F')}>
+          <SText
+            bold={gender === 'F'}
+            moreStyle={(gender === 'F' && { color: Colors.yellow }) || {}}
+          >
+            Female
+          </SText>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => setGender('O')}>
+          <SText
+            bold={gender === 'O'}
+            moreStyle={(gender === 'O' && { color: Colors.yellow }) || {}}
+          >
+            Other
+          </SText>
+        </TouchableOpacity>
+      </Section>
+      <Button onPress={handleSignUp}>
         <SText dark bold center>
           Sign up
         </SText>

@@ -21,3 +21,14 @@ export interface IButton extends IChildren {
   dark?: boolean;
   onPress: () => void;
 }
+
+export interface IAlert extends IChildren {
+  visible: boolean;
+  title: string;
+  buttonText?: Array<string>;
+  onRequestClose?: () => void;
+  buttonPrimary?: () => void;
+  buttonSecundary?: () => void;
+}
+
+export type IGenderForms = 'F' | 'M' | 'O';
