@@ -22,9 +22,10 @@ export interface IButton extends IChildren {
   onPress: () => void;
 }
 
-export interface IAlert extends IChildren {
+export interface IAlert {
   visible: boolean;
   title: string;
+  body?: string;
   buttonText?: Array<string>;
   onRequestClose?: () => void;
   buttonPrimary?: () => void;

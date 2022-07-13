@@ -6,12 +6,13 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import api from '../api/requests';
+import SignUp from '../api/SignIn';
 import { IGenderForms } from '../types/components';
 import Colors from '../utils/Colors';
 import Fonts from '../utils/Fonts';
 import Margin from '../utils/Margin';
 import emailValidation from '../validation/email';
+import Alert from './Alert';
 import Button from './Button';
 import Section from './Section';
 import SText from './SText';
@@ -21,6 +22,8 @@ interface Props {
 }
 
 export function FormSignUp() {
+  const api = new SignUp();
+
   const [name, setName] = useState('');
   const [nameValid, setNameValid] = useState(false);
   const [email, setEmail] = useState('');
@@ -28,6 +31,10 @@ export function FormSignUp() {
   const [gender, setGender] = useState<IGenderForms>('F');
   const [password, setPassword] = useState('');
   const [passwordValid, setPasswordValid] = useState(false);
+
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertTitle, setAlertTitle] = useState('Wait a minute');
+  const [alertBody, setAlertBody] = useState('');
 
   const emailRef = useRef<TextInput>(null);
   const passwordRef = useRef<TextInput>(null);
@@ -41,14 +48,14 @@ export function FormSignUp() {
   const handleSignUp = () => {
     if (nameValid && emailValid && passwordValid) {
       const os = Platform.OS;
-      api.signUp({ email, name, os, gender, password });
+      console.log(api.signUp({ email, name, os, gender, password }));
     }
   };
 
   return (
     <Section>
       <TextInput
-        style={[style.input, nameValid && { borderColor: Colors.yellow }]}
+        style={[style.input, nameValid && { borderColor: Colors.yellowDark }]}
         selectionColor={Colors.yellow}
         value={name}
         onChangeText={(text) => setName(text)}
@@ -120,6 +127,8 @@ export function FormSignUp() {
           Sign up
         </SText>
       </Button>
+
+      <Alert title={alertTitle} visible={alertVisible} body={alertBody} />
     </Section>
   );
 }
@@ -129,6 +138,10 @@ function FormSignIn({ forgotPassword }: Props) {
   const [emailValid, setEmailValid] = useState(false);
   const [password, setPassword] = useState('');
   const [passwordValid, setPasswordValid] = useState(false);
+
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertTitle, setAlertTitle] = useState('Wait a minute');
+  const [alertBody, setAlertBody] = useState('');
 
   const passwordRef = useRef<TextInput>(null);
 
@@ -174,6 +187,8 @@ function FormSignIn({ forgotPassword }: Props) {
           Sign in
         </SText>
       </Button>
+
+      <Alert title={alertTitle} visible={alertVisible} body={alertBody} />
     </Section>
   );
 }

@@ -1,6 +1,8 @@
 class Colors {
   public static yellow: string = '#ffb900';
 
+  public static yellowDark: string = '#805e00';
+
   public static dark: string = '#11121a';
 
   public static white: string = '#F6F7F7';
