@@ -26,8 +26,8 @@ export interface IAlert {
   visible: boolean;
   title: string;
   body?: string;
-  buttonText?: Array<string>;
-  onRequestClose?: () => void;
+  buttonsTexts?: Array<string>;
+  onRequestClose: () => void;
   buttonPrimary?: () => void;
   buttonSecundary?: () => void;
 }

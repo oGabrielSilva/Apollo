@@ -9,3 +9,9 @@ export type SignUpData = {
   os: string;
   gender: IGenderForms;
 };
+
+export interface IAxiosErrorData {
+  code: string;
+  message: string;
+  status: number;
+}

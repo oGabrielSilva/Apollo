@@ -18,7 +18,7 @@ function Alert({
   visible,
   title,
   body,
-  buttonText = ['OK', 'Back'],
+  buttonsTexts = ['OK', 'Back'],
   onRequestClose,
   buttonPrimary,
   buttonSecundary,
@@ -27,7 +27,7 @@ function Alert({
     <Modal
       visible={visible}
       animationType="slide"
-      onRequestClose={onRequestClose ?? (() => {})}
+      onRequestClose={onRequestClose}
       transparent
     >
       {visible && <StatusBar backgroundColor={Colors.yellowDark} />}
@@ -39,20 +39,27 @@ function Alert({
           {(body && <SText>{body}</SText>) || (
             <ActivityIndicator size="small" color={Colors.yellow} />
           )}
-          <View style={style.buttonContainer}>
-            {buttonPrimary && (
-              <>
-                <TouchableOpacity onPress={buttonPrimary}>
-                  <SText>{buttonText[0]}</SText>
+          {buttonPrimary && (
+            <View style={style.buttonContainer}>
+              <TouchableOpacity
+                style={[
+                  style.button,
+                  (buttonSecundary && { width: '50%' }) || { width: '100%' },
+                ]}
+                onPress={buttonPrimary}
+              >
+                <SText center>{buttonsTexts[0]}</SText>
+              </TouchableOpacity>
+              {buttonSecundary && (
+                <TouchableOpacity
+                  style={[style.button, { width: '50%' }]}
+                  onPress={buttonSecundary}
+                >
+                  <SText center>{buttonsTexts[1] || 'Back'}</SText>
                 </TouchableOpacity>
-                {buttonSecundary && (
-                  <TouchableOpacity onPress={buttonSecundary}>
-                    <SText>{buttonText[1]}</SText>
-                  </TouchableOpacity>
-                )}
-              </>
-            )}
-          </View>
+              )}
+            </View>
+          )}
         </Section>
       </View>
     </Modal>
@@ -79,7 +86,10 @@ const style = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    marginBottom: Margin.horizontal,
+    marginBottom: Margin.vertical,
+  },
+  button: {
+    marginTop: Margin.vertical,
   },
 });
 

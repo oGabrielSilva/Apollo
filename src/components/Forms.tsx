@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { AxiosError, AxiosResponse } from 'axios';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import {
   Platform,
   StyleSheet,
@@ -7,7 +8,9 @@ import {
   View,
 } from 'react-native';
 import SignUp from '../api/SignIn';
+import { ApolloContext } from '../context/Apollo';
 import { IGenderForms } from '../types/components';
+import { IAxiosErrorData } from '../types/others';
 import Colors from '../utils/Colors';
 import Fonts from '../utils/Fonts';
 import Margin from '../utils/Margin';
@@ -21,9 +24,9 @@ interface Props {
   forgotPassword: () => void;
 }
 
-export function FormSignUp() {
-  const api = new SignUp();
+const api = new SignUp();
 
+export function FormSignUp() {
   const [name, setName] = useState('');
   const [nameValid, setNameValid] = useState(false);
   const [email, setEmail] = useState('');
@@ -36,6 +39,8 @@ export function FormSignUp() {
   const [alertTitle, setAlertTitle] = useState('Wait a minute');
   const [alertBody, setAlertBody] = useState('');
 
+  const { setUserData } = useContext(ApolloContext);
+
   const emailRef = useRef<TextInput>(null);
   const passwordRef = useRef<TextInput>(null);
 
@@ -45,10 +50,45 @@ export function FormSignUp() {
 
   useEffect(() => setPasswordValid(password.length >= 8), [password]);
 
+  const handleSetAlertOptions = (
+    title: string = 'Wait a minute',
+    body: string = '',
+  ) => {
+    setAlertTitle(title);
+    setAlertBody(body);
+  };
+
   const handleSignUp = () => {
-    if (nameValid && emailValid && passwordValid) {
-      const os = Platform.OS;
-      console.log(api.signUp({ email, name, os, gender, password }));
+    if (!(nameValid && emailValid && passwordValid)) {
+      handleSetAlertOptions(
+        'Oops!',
+        'Some error happened. Check which field is not in yellow',
+      );
+      setAlertVisible(true);
+      return;
+    }
+    handleSetAlertOptions('Wait a minute', '');
+    setAlertVisible(true);
+    const os = Platform.OS;
+    api
+      .signUp({ email, name, os, gender, password })
+      .then((res) => handleSignUpSuccess(res))
+      .catch((e) => handleSignUpBreak(e));
+  };
+
+  const handleSignUpSuccess = (res: AxiosResponse) => {
+    const { data } = res;
+    if (data.session && data.user) {
+      const { session, user } = data;
+      setUserData({ user, session });
+    }
+  };
+
+  const handleSignUpBreak = (e: AxiosError) => {
+    if (e.response && e.response.data) {
+      const response = e.response.data as IAxiosErrorData;
+      setAlertTitle('Oops!');
+      setAlertBody(`Error: ${response.message}`);
     }
   };
 
@@ -128,7 +168,15 @@ export function FormSignUp() {
         </SText>
       </Button>
 
-      <Alert title={alertTitle} visible={alertVisible} body={alertBody} />
+      <Alert
+        title={alertTitle}
+        visible={alertVisible}
+        body={alertBody}
+        onRequestClose={() => setAlertVisible(false)}
+        buttonPrimary={
+          (alertBody && (() => setAlertVisible(false))) || undefined
+        }
+      />
     </Section>
   );
 }
@@ -188,7 +236,13 @@ function FormSignIn({ forgotPassword }: Props) {
         </SText>
       </Button>
 
-      <Alert title={alertTitle} visible={alertVisible} body={alertBody} />
+      <Alert
+        title={alertTitle}
+        visible={alertVisible}
+        body={alertBody}
+        onRequestClose={() => setAlertVisible(false)}
+        buttonPrimary={() => setAlertVisible(false)}
+      />
     </Section>
   );
 }

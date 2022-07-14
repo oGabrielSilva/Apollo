@@ -1,5 +1,5 @@
 import { SignUpData } from '../types/others';
-import Requests from './Requests';
+import Requests from '../Shared/Requests';
 
 class SignUp extends Requests {
   constructor() {
@@ -8,7 +8,7 @@ class SignUp extends Requests {
   }
 
   public signUp({ email, name, os: device, gender, password }: SignUpData) {
-    this.getApi()({
+    return this.getApi()({
       method: 'post',
       url: this.getUrl(),
       data: {
@@ -18,12 +18,7 @@ class SignUp extends Requests {
         gender,
         password,
       },
-    })
-      .then((response) => {
-        console.log('Oi');
-        return response.data;
-      })
-      .catch((e) => e.response.data);
+    });
   }
 }
 
