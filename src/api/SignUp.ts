@@ -1,22 +1,24 @@
-import { SignInData } from '../types/others';
+import { SignUpData } from '../types/others';
 import Requests from '../Shared/Requests';
 
-class SignIn extends Requests {
+class SignUp extends Requests {
   constructor(url: string) {
     super(url);
   }
 
-  public signIn({ email, os: device, password }: SignInData) {
+  public signUp({ email, name, os: device, gender, password }: SignUpData) {
     return this.getApi()({
       method: 'post',
       url: this.getUrl(),
       data: {
         email,
+        name,
         device,
+        gender,
         password,
       },
     });
   }
 }
 
-export default SignIn;
+export default SignUp;

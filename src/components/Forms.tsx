@@ -7,7 +7,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import SignUp from '../api/SignIn';
+import SignIn from '../api/SignIn';
+import SignUp from '../api/SignUp';
 import { ApolloContext } from '../context/Apollo';
 import { IGenderForms } from '../types/components';
 import { IAxiosErrorData } from '../types/others';
@@ -24,7 +25,8 @@ interface Props {
   forgotPassword: () => void;
 }
 
-const api = new SignUp();
+const signUp = new SignUp('/account/create');
+const signIn = new SignIn('/account/signin');
 
 export function FormSignUp() {
   const [name, setName] = useState('');
@@ -70,7 +72,7 @@ export function FormSignUp() {
     handleSetAlertOptions('Wait a minute', '');
     setAlertVisible(true);
     const os = Platform.OS;
-    api
+    signUp
       .signUp({ email, name, os, gender, password })
       .then((res) => handleSignUpSuccess(res))
       .catch((e) => handleSignUpBreak(e));
@@ -182,6 +184,7 @@ export function FormSignUp() {
 }
 
 function FormSignIn({ forgotPassword }: Props) {
+  const { setUserData } = useContext(ApolloContext);
   const [email, setEmail] = useState('');
   const [emailValid, setEmailValid] = useState(false);
   const [password, setPassword] = useState('');
@@ -196,6 +199,48 @@ function FormSignIn({ forgotPassword }: Props) {
   useEffect(() => setEmailValid(emailValidation(email)), [email]);
 
   useEffect(() => setPasswordValid(password.length >= 8), [password]);
+
+  const handleSetAlertOptions = (
+    title: string = 'Wait a minute',
+    body: string = '',
+  ) => {
+    setAlertTitle(title);
+    setAlertBody(body);
+  };
+
+  const handleSignIn = () => {
+    if (!(emailValid && passwordValid)) {
+      handleSetAlertOptions(
+        'Oops!',
+        'Some error happened. Check which field is not in yellow',
+      );
+      setAlertVisible(true);
+      return;
+    }
+    handleSetAlertOptions('Wait a minute', '');
+    setAlertVisible(true);
+    const os = Platform.OS;
+    signIn
+      .signIn({ email, os, password })
+      .then((res) => handleSignUpSuccess(res))
+      .catch((e) => handleSignUpBreak(e));
+  };
+
+  const handleSignUpSuccess = (res: AxiosResponse) => {
+    const { data } = res;
+    if (data.session && data.user) {
+      const { session, user } = data;
+      setUserData({ user, session });
+    }
+  };
+
+  const handleSignUpBreak = (e: AxiosError) => {
+    if (e.response && e.response.data) {
+      const response = e.response.data as IAxiosErrorData;
+      setAlertTitle('Oops!');
+      setAlertBody(`Error: ${response.message}`);
+    }
+  };
 
   return (
     <Section>
@@ -230,7 +275,7 @@ function FormSignIn({ forgotPassword }: Props) {
           <SText>Forgot password?</SText>
         </TouchableOpacity>
       </View>
-      <Button onPress={() => {}}>
+      <Button onPress={handleSignIn}>
         <SText dark bold center>
           Sign in
         </SText>
@@ -241,7 +286,9 @@ function FormSignIn({ forgotPassword }: Props) {
         visible={alertVisible}
         body={alertBody}
         onRequestClose={() => setAlertVisible(false)}
-        buttonPrimary={() => setAlertVisible(false)}
+        buttonPrimary={
+          (alertBody && (() => setAlertVisible(false))) || undefined
+        }
       />
     </Section>
   );

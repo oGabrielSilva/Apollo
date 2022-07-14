@@ -7,8 +7,8 @@ class Requests {
 
   private api = axios;
 
-  constructor() {
-    this.url = '';
+  constructor(url: string) {
+    this.url = `${this.base}${url}`;
   }
 
   public getUrl(): string {
