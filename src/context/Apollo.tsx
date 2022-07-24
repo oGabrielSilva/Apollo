@@ -1,4 +1,10 @@
-import React, { createContext, useEffect, useMemo, useState } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { StatusBar } from 'react-native';
 import { IChildren } from '../types/children';
 import { IContext, IUserData, TSession, TUser } from '../types/context';
@@ -12,17 +18,34 @@ function ApolloProvider({ children }: IChildren) {
   const [userInfo, setUserInfo] = useState<TUser>(null);
   const [sessionInfo, setSessionInfo] = useState<TSession>(null);
 
-  useEffect(() => console.log(userInfo), [userInfo]);
-
   const userStorage = useMemo(() => new UserData(), []);
   const sessionStorage = useMemo(() => new SessionData(), []);
+
+  useEffect(() => {
+    userStorage.getStoreData().then((data) => {
+      setUserInfo(JSON.parse(data));
+    });
+  }, []);
+
+  // useEffect(() => {
+  //   sessionStorage.getStoreData().then((data) => {
+  //     setSessionInfo(JSON.parse(data));
+  //   });
+  // }, []);
+
+  const handleLogOut = useCallback(() => {
+    userStorage.storeData('');
+    sessionStorage.storeData('');
+    setUserInfo(null);
+    setSessionInfo(null);
+  }, []);
 
   const setUserData = (data: IUserData) => {
     const { session, user } = data;
     userStorage.storeData(JSON.stringify(user)).then(() => setUserInfo(user));
     sessionStorage
       .storeData(JSON.stringify(session))
-      .then(() => setSessionInfo(session));
+      .then(() => setSessionInfo(null));
   };
 
   const state = useMemo(
@@ -30,6 +53,7 @@ function ApolloProvider({ children }: IChildren) {
       userInfo,
       sessionInfo,
       setUserData,
+      handleLogOut,
     }),
     [userInfo, sessionInfo, setUserData],
   );

@@ -221,7 +221,7 @@ function FormSignIn({ forgotPassword }: Props) {
     setAlertVisible(true);
     const os = Platform.OS;
     signIn
-      .signIn({ email, os, password })
+      .signIn({ email: email.trim(), os, password: password.trim() })
       .then((res) => handleSignUpSuccess(res))
       .catch((e) => handleSignUpBreak(e));
   };

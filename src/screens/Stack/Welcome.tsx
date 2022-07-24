@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Image, StatusBar, StyleSheet, View } from 'react-native';
+import Alert from '../../components/Alert';
 import Button from '../../components/Button';
 import Main from '../../components/Main';
 import Section from '../../components/Section';
 import SText from '../../components/SText';
+import { ApolloContext } from '../../context/Apollo';
 import { TWelcome } from '../../types/screens';
 import Colors from '../../utils/Colors';
 import Fonts from '../../utils/Fonts';
@@ -11,6 +13,20 @@ import Images from '../../utils/Images';
 import Margin from '../../utils/Margin';
 
 function Welcome({ navigation }: TWelcome) {
+  const { userInfo, handleLogOut } = useContext(ApolloContext);
+  const [alertBody, setAlertBody] = useState('');
+
+  useEffect(() => {
+    if (userInfo !== null) {
+      const body: string[] = [];
+      const values = Object.values(userInfo);
+      Object.keys(userInfo).forEach((value, index) => {
+        body.push(`${value}: ${values[index]}`);
+      });
+      setAlertBody(body.join('\n'));
+    }
+  }, [userInfo]);
+
   const handleNavigatorToSignIn = () => navigation.navigate('SignIn');
   const handleNavigatorToSignUp = () => navigation.navigate('SignUp');
 
@@ -26,26 +42,36 @@ function Welcome({ navigation }: TWelcome) {
         </Section>
       </Main>
       <View style={{ backgroundColor: Colors.dark }}>
-        <Section moreStyle={style.container}>
-          <SText size={25} bold dark>
-            Welcome
-          </SText>
-          <SText dark moreStyle={style.show}>
-            Sign in or register. We will be happy to have you with us. Share
-            your creativity with our community.
-          </SText>
-          <Button dark onPress={handleNavigatorToSignIn}>
-            <SText center bold>
-              Sign in
+        {!userInfo && (
+          <Section moreStyle={style.container}>
+            <SText size={25} bold dark>
+              Welcome
             </SText>
-          </Button>
-          <Button onPress={handleNavigatorToSignUp}>
-            <SText dark center bold>
-              Sign up
+            <SText dark moreStyle={style.show}>
+              Sign in or register. We will be happy to have you with us. Share
+              your creativity with our community.
             </SText>
-          </Button>
-        </Section>
+            <Button dark onPress={handleNavigatorToSignIn}>
+              <SText center bold>
+                Sign in
+              </SText>
+            </Button>
+            <Button onPress={handleNavigatorToSignUp}>
+              <SText dark center bold>
+                Sign up
+              </SText>
+            </Button>
+          </Section>
+        )}
       </View>
+      <Alert
+        title="You are already registered"
+        visible={!!userInfo?.name}
+        onRequestClose={() => {}}
+        body={alertBody}
+        buttonPrimary={handleLogOut}
+        buttonsTexts={['Log out']}
+      />
     </>
   );
 }

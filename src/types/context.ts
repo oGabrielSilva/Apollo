@@ -3,6 +3,7 @@ export interface IContext {
   userInfo: TUser;
   sessionInfo: TSession;
   setUserData: (value: IUserData) => void;
+  handleLogOut: () => void;
 }
 
 export type TSession = {
